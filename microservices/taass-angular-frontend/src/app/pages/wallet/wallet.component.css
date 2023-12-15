@@ -1,0 +1,12 @@
+/* 
+@media (max-width: 768px) {
+    app-sidebar    {
+        display: none;
+        transition: cubic-bezier(0.215, 0.610, 0.355, 1);
+    }
+  }
+   */
+
+::ng-deep .cdk-overlay-container{
+    z-index: 1200 !important;
+}

@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">OurWallet</string>
+    <!-- Strings related to login -->
+    <string name="prompt_username">Username</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_log_in">Login</string>
+    <string name="error_field_required">Username obbligatorio</string>
+    <string name="error_invalid_username">Username invalido</string>
+    <string name="error_invalid_password">Password invalida</string>
+    <string name="prompt_email">Email</string>
+    <string name="error_invalid_email">Email invalida</string>
+    <string name="error_email_required">Email richiesta</string>
+    <string name="error_username_taken">Username già usato</string>
+    <string name="error_email_taken">Email già utilizzata</string>
+    <string name="oauth">86393286031-5dqcksufteitfnms8pjt2d561p8flvu8.apps.googleusercontent.com</string>
+</resources>

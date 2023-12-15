@@ -1,0 +1,198 @@
+
+     
+        <div class="d-flex flex-column" id="content-wrapper">         
+            <div class="container-fluid">
+                <div class="d-sm-flex justify-content-between align-items-center mb-4">
+                    <h3 class="text-dark mb-0">Dashboard</h3><a class="btn btn-primary btn-sm d-none d-sm-inline-block" role="button" href="#"><i class="fas fa-download fa-sm text-white-50"></i>&nbsp;Generate Report</a></div>
+                <div class="row">
+                    <div class="col-md-6 col-xl-3 mb-4">
+                        <div class="card shadow border-left-primary py-2">
+                            <div class="card-body">
+                                <div class="row align-items-center no-gutters">
+                                    <div class="col mr-2">
+                                        <div class="text-uppercase text-primary font-weight-bold text-xs mb-1"><span>Earnings (monthly)</span></div>
+                                        <div class="text-dark font-weight-bold h5 mb-0"><span>{{getCurrentMonthEarnings()}}</span></div>
+                                    </div>
+                                    <div class="col-auto"><i class="fas fa-calendar fa-2x text-gray-300"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xl-3 mb-4">
+                        <div class="card shadow border-left-success py-2">
+                            <div class="card-body">
+                                <div class="row align-items-center no-gutters">
+                                    <div class="col mr-2">
+                                        <div class="text-uppercase text-success font-weight-bold text-xs mb-1"><span>Earnings (annual)</span></div>
+                                        <div class="text-dark font-weight-bold h5 mb-0"><span>{{getCurrentYearEarnings()}}</span></div>
+                                    </div>
+                                    <div class="col-auto"><i class="fas fa-dollar-sign fa-2x text-gray-300"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xl-3 mb-4">
+                        <div class="card shadow border-left-info py-2">
+                            <div class="card-body">
+                                <div class="row align-items-center no-gutters">
+                                    <div class="col mr-2">
+                                        <div class="text-uppercase text-info font-weight-bold text-xs mb-1"><span>Goals</span></div>
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col-auto">
+                                                <div class="text-dark font-weight-bold h5 mb-0 mr-3"><span>{{getGoalsPercentage()}}%</span></div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="progress progress-sm">
+                                                    <div class="progress-bar bg-info" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"[style.width.%]="getGoalsPercentage()"><span class="sr-only">{{getGoalsPercentage()}}%</span></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto"><i class="fas fa-clipboard-list fa-2x text-gray-300"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xl-3 mb-4">
+                        <div class="card shadow border-left-warning py-2">
+                            <div class="card-body">
+                                <div class="row align-items-center no-gutters">
+                                    <div class="col mr-2">
+                                        <div class="text-uppercase text-warning font-weight-bold text-xs mb-1"><span>Pending Requests</span></div>
+                                        <div class="text-dark font-weight-bold h5 mb-0"><span>18</span></div>
+                                    </div>
+                                    <div class="col-auto"><i class="fas fa-comments fa-2x text-gray-300"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-xl-7">
+
+                        <div class="card shadow mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="text-primary font-weight-bold m-0">Earnings Overview:</h6>
+                         
+                                <div>
+                                    <button  mat-mini-fab class="btn  btn-default mr-1"  color="default" (click)="barChartYear=barChartYear-1;retrieveChartData()"><i class="fas fa-chevron-left"></i></button>
+                                    <mat-form-field class="example-full-width">
+                                        <input min="0" type="number"  step="1" matInput placeholder="Year"  [(ngModel)]="barChartYear" (change)="retrieveChartData()">
+                                      </mat-form-field>
+                                      <button mat-mini-fab class="btn  btn-default mr-1"  color="default"(click)="barChartYear=barChartYear+1;retrieveChartData()" ><i class="fas fa-chevron-right"></i></button>
+                                     
+                                </div>
+                            
+
+                                <div class="dropdown no-arrow"><button class="btn btn-link btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button"><i class="fas fa-ellipsis-v text-gray-400"></i></button>
+                                    <div class="dropdown-menu shadow dropdown-menu-right animated--fade-in"
+                                        role="menu">
+                                        <p class="text-center dropdown-header">Actions:</p>
+
+                                        <a class="dropdown-item" role="presentation" (click)="retrieveChartData()" [routerLink]="['']" routerLinkActive="router-link-active" ><i class="fa fa-sync " aria-hidden="true"></i>&nbsp;Refresh</a>
+                                       
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                            <div style="display: block">
+                                              <canvas baseChart
+                                                    [datasets]="barChartData"
+                                                    [labels]="barChartLabels"
+                                                    [options]="barChartOptions"
+                                                    [legend]="barChartLegend"
+                                                    [chartType]="barChartType"></canvas>
+                                            </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-xl-5">
+                        <div class="card shadow mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="text-primary font-weight-bold m-0">Expense sources: </h6> 
+
+                                <div class="dropdown no-arrow"><button class="btn btn-link btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button"><i class="fas fa-ellipsis-v text-gray-400"></i></button>
+                                    <div class="dropdown-menu shadow dropdown-menu-right animated--fade-in"
+                                        role="menu">
+                                        <p class="text-center dropdown-header">dropdown header:</p><a class="dropdown-item" role="presentation" href="#">&nbsp;Action</a><a class="dropdown-item" role="presentation" href="#">&nbsp;Another action</a>
+                                        <div class="dropdown-divider"></div><a class="dropdown-item" role="presentation" href="#">&nbsp;Something else here</a></div>
+                                </div>
+                            </div>
+
+                           <!-- Card Body -->
+                            <div class="card-body">
+                                <h4 class="small font-weight-bold">This stat is updated the 1st of each month</h4>
+
+                                    <div class="pt-4 pb-2">
+                                            <div style="display: block" *ngIf="pieChartData && pieChartLabels">
+                                                    <canvas baseChart
+                                                            [data]="pieChartData"
+                                                            [labels]="pieChartLabels"
+                                                            [chartType]="pieChartType"></canvas>
+                                                  </div>
+                                    </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 mb-4">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="text-primary font-weight-bold m-0">Goal</h6>
+                        </div>
+                        <div class="card-body">
+                            <div *ngFor="let data of goalsData" class="card mb-2" >
+
+                                <div class="card-header"  *ngIf="data.goal.status=='Active'">
+                                    <h4 class="small font-weight-bold">{{data.goal.name}} <span class="float-right">{{data.spent}}€ su {{data.goal.amountRequested}}€</span></h4>
+                                </div>
+
+                                <div class="card-body"  *ngIf="data.goal.status=='Active'">
+                                    <div class="progress mb-4">
+                                        <div class="progress-bar bg-danger" attr.aria-valuenow="{{getActualGoalPercentage(data)}}%" aria-valuemin="0" aria-valuemax="100"  [style.width.%]="getActualGoalPercentage(data)">{{getActualGoalPercentage(data)}}%<span class="sr-only">{{getActualGoalPercentage(data)}}%</span></div>
+                                    </div>
+                                    <h4 class="small font-weight-bold">L'obiettivo scade il  <span class="text-danger" >{{data.goal.deadLine|date : 'dd/MM/yy'}}</span></h4>
+    
+                                    <h5 class="small ">Oggi puoi risparmiare 
+                                        <span  *ngIf="data.amount>=0" class="alert-success">  {{data.amount}}€</span>
+                                        <span  *ngIf="data.amount<0" class="alert-success">  {{data.amount}}€</span>
+                                        <button class="ml-2 btn-mini btn-success"
+                                              data-toggle="tooltip" data-placement="top" title="Create transaction" data-toggle="modal" data-target="#transactionModal" (click)="addTransaction(data)"
+                                        > <span class='fas fa-plus' ></span></button>
+                                    </h5>
+                                </div>
+                               
+                            </div>
+                        </div> 
+
+                       
+                    </div>
+
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="text-primary font-weight-bold m-0">Monthly Budgets</h6>
+                        </div>
+                        <div class="card-body">
+                            <div *ngFor="let data of budgetsData">
+                                <h4 class="small font-weight-bold">{{data.budget.name}}<span class="float-right">{{data.spent}}€ su {{data.budget.amount}}€</span></h4>
+                                <div class="progress mb-4">
+                                    <div class="progress-bar bg-danger" attr.aria-valuenow="{{getActualPercentage(data)}}%" aria-valuemin="0" aria-valuemax="100"  [style.width.%]="getActualPercentage(data)">{{getActualPercentage(data)}}%<span class="sr-only">{{getActualPercentage(data)}}%</span></div>
+                                </div>
+                                <h5 class="small ">Oggi puoi spendere
+                                    <span  *ngIf="data.amount>=0" class="alert-success">  {{data.amount}}€</span>
+                                    <span  *ngIf="data.amount<0" class="alert-success">  {{data.amount}}€</span>
+
+                                </h5>
+                                <br>
+                            </div>
+                        </div> 
+
+                       
+                    </div>
+                 
+                </div>
+                
+        </div>
+        <app-transaction-modal [newTransaction]="this.newTransaction" (change)="update($event)" ></app-transaction-modal>

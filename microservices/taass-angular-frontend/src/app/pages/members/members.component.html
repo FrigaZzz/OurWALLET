@@ -1,0 +1,164 @@
+<div class="container-fluid">
+    
+    <div class="card shadow mb-4 mat-elevation-z8">    
+      <div class="card-body">
+          <section id="sample-table"  class="row">
+          
+              <div class="form-group col-xl-12 col-sm-12"> 
+                <div class="card shadow border-left-success py-2 ">
+                  <div class="card-body">
+                      <div class="row align-items-center no-gutters">
+                          <div class="col-auto mr-2">
+                              <div class="text-uppercase text-success font-weight-bold text-xm mb-1"><span> Members for </span></div>
+                              
+                          </div>
+                          <div class="col-auto"><a class="btn-link" href="/dashboard"><h5>{{this.currentGroup?.name}}</h5></a></div>
+
+                      </div>
+                      <div class="dropdown-divider"></div>
+                      <div class="alert alert-danger alert-dismissible fade show" role="alert" *ngIf="invalidMember">
+                        Please insert a positive amount and select a category
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>
+                     
+                      </div>
+                  </div>
+                </div>
+                
+
+    
+              <div class="members-management col-xl-12 col-sm-12">
+                <div class="card mat-elevation-z5" >    
+                   
+                        <div id="collapseOne" class="collapse ml-2 show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                            <div class=" row">
+                              <div class="col-8 row">
+                              
+                                  <!-- #region Category-->
+                                  <div class="form-group col-6 ">
+                                      <span for="category" class="text-success">newMember</span>
+                                      <select id="category" class="custom-select" name="category" #category="ngModel" [(ngModel)]="newUser.user">
+                                          <option  [ngValue]="null">
+                                              ----
+                                          </option>  
+                                          <option *ngFor="let user of this.allUsers" [ngValue]="user">
+                                          {{user.username}}
+                                          </option>    
+                                      </select>
+                                  </div>
+
+                                  <div class="form-group col-6 ">
+                                    <span for="category" class="text-success">isPayer</span>
+                                    <select id="category" class="custom-select" name="category" #category="ngModel" [(ngModel)]="newUser.payer">
+                                        <option  [ngValue]="false">
+                                            false
+                                        </option>  
+                                        <option  [ngValue]="true">
+                                             true
+                                        </option>    
+                                    </select>
+                                </div>
+                                  
+                              </div>   
+                              <div class="col-4 mt-4"> 
+                                    <button  id="send"color="success" class="btn  btn-success mr-1"  
+                                    data-toggle="tooltip" data-placement="top" title="Create member" 
+                                     aria-expanded="true" aria-controls="collapseOne" (click)="addMember()"
+                                    >
+                                    <i class="fas fa-check"></i>        
+                                    </button>   
+                              
+                                    <button  id="send"color="success" class="btn  btn-danger mr-1 "  
+                                    data-toggle="tooltip" data-placement="top" title="Cancel member creation" 
+                                    data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" (click)="this.isCreating=!isCreating"
+                                    >
+                                    <i class="fas fa-times"></i>        
+                                    </button>   
+                              </div>
+                            
+                          </div>
+                          </div>
+                    
+                       
+
+
+
+                  <table mat-table  [dataSource]="dataSource" matSort   matSortActive="id" matSortDirection="desc" class="w-100 pl-2 ">
+  
+                     <ng-container matColumnDef="select">
+                      <th mat-header-cell *matHeaderCellDef style="width: 150px;">
+                        <label class=" text-success mr-3" >Toggle create</label>
+                        <button mat-mini-fab *ngIf="!isCreating" class="btn  btn-success mr-1"  
+                                data-toggle="tooltip" data-placement="top" title="Create member" 
+                                data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" (click)="isCreating=!isCreating"
+
+                                >
+                        
+                          <i class="fa fa-chevron-down " aria-hidden="true"></i>
+                        </button>
+
+                        <button mat-mini-fab *ngIf="isCreating" class="btn  btn-success mr-1"  
+                        data-toggle="tooltip" data-placement="top" title="Create member" 
+                        data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" (click)="isCreating=!isCreating"
+
+                        >
+                
+                                 <i class="fa fa-chevron-up " aria-hidden="true"></i>
+                         </button>
+
+                      </th>
+                      <td mat-cell *matCellDef="let member">
+                        <a mat-mini-fab color="secondary" class="btn mr-1" 
+                              data-toggle="tooltip" data-placement="top" title="View member transactions" 
+                              
+                        ><i class="fas fa-search-dollar"></i></a>
+                      </td>
+                    </ng-container> 
+  
+                    <ng-container  matColumnDef="id">
+                      <th mat-header-cell [hidden]="true"   *matHeaderCellDef mat-sort-header> id </th>
+                      <td mat-cell  [hidden]="true" *matCellDef="let member"> {{member.id}} </td>
+                    </ng-container>
+                    
+                    <ng-container matColumnDef="name">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> username </th>
+                      <td mat-cell *matCellDef="let member"> {{member?.username}} </td>
+                    </ng-container>
+     
+                    <ng-container matColumnDef="payer">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> payer </th>
+                        <td mat-cell *matCellDef="let member"> {{member?.isPayer}} </td>
+                      </ng-container>
+                    
+                    <ng-container matColumnDef="actions">
+                      <th mat-header-cell *matHeaderCellDef>
+                      </th>
+
+                      <td mat-cell *matCellDef="let member">
+                          <div  mat-mini-fab data-toggle="dropdown" aria-expanded="true"><i class="fas fa-ellipsis-v"></i></div>
+                              <div class="dropdown-menu shadow  " role="menu">
+                                  <button class="dropdown-item" role="presentation" href="#"><i class="fas fa-search fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Info</button>
+                                  <div class="dropdown-divider"></div>
+                                  <!-- <button class="dropdown-item"   role="presentation" href="#" (click)="editMember(member)"><i class="fas fa-edit fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Edit</button> -->
+                                  <button class="dropdown-item"  role="presentation" href="#" (click)="deleteMember(member)"><i class="fas fa-trash fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Delete</button>
+                          </div>
+                        <!-- <button mat-mini-fab color="accent" data-toggle="modal" data-target="#beacon"><span class="fa fa-edit" ></span></button>         -->
+                      </td>
+
+                      
+                  </ng-container>
+  
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="changeCurrentSelection();  this.dataSource.sort = this.sort;"></tr>
+  
+                  </table>
+                  <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+  
+                </div>
+              </div>
+          </section>
+        </div>
+      </div>
+    </div>

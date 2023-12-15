@@ -1,0 +1,87 @@
+
+
+
+
+
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800">Transazioni</h1>
+    <select class="custom-select">
+        <option value="1" default>All</option>
+        <option value="2">VISA</option>
+        <option value="3">Paypal</option>
+      </select>
+     
+      
+    <div class="card shadow mb-4">
+        
+      <div class="card-body">
+          <div class="row">
+            <div class="col-1">
+                <select class="custom-select">
+                    <option value="1" default>10</option>
+                    <option value="2">15</option>
+                    <option value="3">20</option>
+                  </select>
+              </div>
+              <div class="col-8">
+
+              </div>
+              <div class="col-3">
+               <div class="input">
+                <input type="text" class="form-control mb-4 npt" [(ngModel)]="searchText" placeholder="search">
+            </div>
+              </div>
+          </div>
+          <div>
+            <mat-form-field>
+              <input matInput [matDatepicker]="picker" placeholder="Choose a date">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+          
+          </div>
+       
+
+        <div class="table-responsive ">
+            <table class="table table-hover table-striped my-4 ">
+                <thead class="thead-dark">
+              <tr>
+                <th>ID</th>
+                <th>Age</th>
+                <th>Category</th>
+                <th>Amount</th>
+                <th >
+                    <button class="btn btn-info ml-4 mt-3 btn-add" data-toggle="modal" data-target="#myModal" (click)="close()">
+                        <i class="fa fa-plus " aria-hidden="true"></i>
+                      </button>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+            <tr scope="row" *ngFor="let transaction of transactions">
+                <td>
+                  {{transaction?.id }}
+                </td>
+                <td>{{transaction.date| date:'short'}} 
+                <td>
+                  {{transaction.category.name}}
+                </td>
+                <td>
+                  {{transaction.amount}} €
+                </td>
+                <td>
+                    <button class="btn btn-danger mr-1" ><span class="fa fa-trash"></span></button>
+                    <button class="btn btn-success ml-1" data-toggle="modal" data-target="#beacon"><span class="fa fa-edit" ></span></button>
+          
+                </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+</div>
+
+
+

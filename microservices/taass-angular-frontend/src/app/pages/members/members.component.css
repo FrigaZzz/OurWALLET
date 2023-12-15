@@ -1,0 +1,17 @@
+table.table-fit {
+    width: fit-content !important;
+    table-layout: auto !important;
+}
+table.table-fit thead th, table.table-fit tfoot th {
+    width: fit-content !important;
+}
+table.table-fit tbody td, table.table-fit tfoot td {
+    width: fit-content !important;
+}
+
+
+
+.example-container {
+    height: 400px;
+    overflow: auto;
+  }

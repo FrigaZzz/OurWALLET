@@ -1,0 +1,87 @@
+
+<!-- Groups table -->
+<div class="container-fluid">
+    
+    <div class="card shadow mb-4 mat-elevation-z8">    
+      <div class="card-body">
+          <section id="sample-table"  class="row">
+          
+              <div class="form-group col-xl-12 col-sm-12"> 
+                <div class="card shadow border-left-success py-2 ">
+                  <div class="card-body">
+                      <div class="row align-items-center no-gutters">
+                          <div class="col mr-2">
+                              <div class="text-uppercase text-success font-weight-bold text-xm mb-1"><span>All Accounts for </span></div>
+                          </div>
+                          <div class="col-auto"><i class="fas fa-object-group"></i> <a class="btn-link" href="/dashboard">current {{type}}</a></div>
+                      </div>
+                  </div>
+                </div>
+                
+              </div>
+            
+              <div class="groups-management col-xl-12 col-sm-12">
+                <div class="mat-elevation-z8">
+
+                  
+                  <table mat-table  [dataSource]="dataSource" matSort   matSortActive="id" matSortDirection="desc" class="w-100 pl-2 ">
+  
+                     <ng-container matColumnDef="select">
+                      <th mat-header-cell *matHeaderCellDef>
+                        <button mat-mini-fab color="accent" *ngIf="type=='user'"data-toggle="modal" data-target="#accountModal" (click)="createAccount()">
+                          <i class="fa fa-plus " aria-hidden="true"></i>
+                        </button>
+                      </th>
+                      <td mat-cell *matCellDef="let account">
+                        <a mat-mini-fab color="secondary" class="btn mr-1" 
+                              data-toggle="tooltip" data-placement="top" title="View category transactions" 
+                              [routerLink]="['/accounts',account.id]"   
+                        ><i class="fas fa-search-dollar"></i></a>
+                      </td>
+                    </ng-container> 
+  
+                    <ng-container  matColumnDef="id">
+                      <th mat-header-cell [hidden]="true"   *matHeaderCellDef mat-sort-header> id </th>
+                      <td mat-cell  [hidden]="true" *matCellDef="let account"> {{account.id}} </td>
+                    </ng-container>
+                    
+                    <ng-container matColumnDef="name">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> name </th>
+                      <td mat-cell *matCellDef="let account"> {{account.name}} </td>
+                    </ng-container>
+  
+                  
+                    <ng-container matColumnDef="isEasyPay">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> isEasyPay </th>
+                      <td mat-cell *matCellDef="let account"> {{account.isEasyPay}} </td>
+                    </ng-container>
+  
+                    <ng-container matColumnDef="actions">
+                      <th mat-header-cell *matHeaderCellDef>
+                      
+                        
+                      </th>
+                      <td mat-cell *matCellDef="let account">
+                          <div  mat-mini-fab data-toggle="dropdown" aria-expanded="true"><i class="fas fa-ellipsis-v"></i></div>
+                              <div class="dropdown-menu shadow  " role="menu">
+                                  <button class="dropdown-item" role="presentation" href="#"><i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Show</button>
+                                  <div class="dropdown-divider"></div>
+                                  <button class="dropdown-item"  [disabled]="this.type!='user'" role="presentation" href="#" (click)="deleteAccount(account)"><i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Delete</button>
+                          </div>
+                        <!-- <button mat-mini-fab color="accent" data-toggle="modal" data-target="#beacon"><span class="fa fa-edit" ></span></button>         -->
+                      </td>
+                  </ng-container>
+  
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="changeCurrentSelection();  this.dataSource.sort = this.sort;"></tr>
+  
+                  </table>
+                  <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+  
+                </div>
+              </div>
+          </section>
+        </div>
+      </div>
+    </div>
+    <app-account-modal [newAccount]="this.newAccount"></app-account-modal>

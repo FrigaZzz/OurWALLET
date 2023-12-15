@@ -1,0 +1,140 @@
+<div class="modal fade" id="transactionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"  (clickOutside)="abortNewTransaction()">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add transaction</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="container">
+            <nav>
+              <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <a class="nav-item nav-link " id="nav-home-tab" data-toggle="tab" href="#form" role="tab" aria-controls="nav-home" [ngClass]="{'active': !this.isTransfer&&!this.isDeposit}"  (click)="this.isTransfer=this.isDeposit=false"  >Transaction</a>
+                <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#form" role="tab" aria-controls="nav-profile" [ngClass]="{'active': this.isTransfer&&!this.isDeposit}"  (click)="this.isDeposit=!(this.isTransfer=true)"  >Transfer</a>
+                <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#form" role="tab" aria-controls="nav-profile" [ngClass]="{'active': this.isDeposit&&!this.isTransfer}" (click)="this.isTransfer=!(this.isDeposit=true)"  >Deposit</a>
+
+              </div>
+            </nav>
+            <div class="tab-content" id="nav-tabContent">
+              <div class="tab-pane fade show active" id="form" role="tabpanel" aria-labelledby="nav-home-tab">
+                <form #form="ngForm">
+
+                <br>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" *ngIf="this.invalidAmount">
+                    Please insert a valid number
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="this.invalidAmount=false">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+  
+                  <!-- #region AMOUNT-->
+                  <div class="mt-2 form-group row">
+                    <div class="col-sm-3 col-form-label">
+                      <span for="amount" class="text-success">Amount</span>
+                    </div>
+        
+                    <div class="col-sm-9">
+                      <input required id="amount" class="form-control" step="1" min="0"  name="newamount" #newamount="ngModel" class="form-control" aria-label="Amount" [(ngModel)]="newTransaction.amount" (input)="verify($event.target.value)">            
+                    </div>
+                  </div>
+  
+                  <!-- #region AccountFrom-->
+                  <div class="form-group row"  >
+                    <div class="col-sm-3 col-form-label">
+                      <span  *ngIf="!this.isDeposit" for="accountFrom" class="text-success">Source</span>
+                      <span  *ngIf="this.isDeposit" for="accountFrom" class="text-success">Deposit to</span>
+
+                    </div>
+                    <div class="col-sm-9">
+                      <!-- Deposit should allow this to remail unfilled -->
+                      <!-- id="accountFrom" name="accountFrom"  -->
+                      <select required class="form-control custom-select" [compareWith]="compareById" id="accountFrom" name="accountFrom"  #accountFrom="ngModel"  [(ngModel)]="newTransaction.accountSender">
+                        <option *ngFor="let acc of userAccounts "  [ngValue]="acc" >
+                          {{acc.name}}
+                      </option>
+                  
+                      </select>
+                    </div>
+                  </div>
+  
+                  <!-- #region AccountTo-->
+                  <div class="form-group row" *ngIf="this.isTransfer">
+                    <div class="col-sm-3 col-form-label">
+                      <span for="accountTo" class="text-success pr-1">Destination </span>
+                    </div>
+                    <div class="col-sm-9">
+                      <select required id="accountTo"  [compareWith]="compareById"  class="form-control custom-select" name="accountTo" #accountTo="ngModel" [(ngModel)]="newTransaction.accountReceived">
+                       
+                        <option *ngFor="let account of allAccounts " [ngValue]="account">
+                          {{account.name}}
+                        </option>
+             
+                      </select>
+                    </div>
+                  </div>
+  
+          
+                   <!-- #region Category-->
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label">
+                      <span for="category" class="text-success">Category</span>
+                    </div>
+                    <div class="col-sm-9">
+                      <select required id="category" class="form-control custom-select"  [compareWith]="compareById"  name="category" #category="ngModel" [(ngModel)]="newTransaction.category"   (change)="this.checkCategorySelection($event.target.value)" >
+                         <option *ngFor="let category of categories" [ngValue]="category">
+                          {{category.name}}
+                        </option>    
+                      </select>
+                    </div>
+                  </div>
+  
+                  <!-- #region Date-->
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label mt-2 ">
+                      <span for="date" class="text-success">Date</span>
+                    </div>
+                    <div class="col-sm-9">
+                      <mat-form-field class="">
+                        <input required class="form-control" matInput [matDatepicker]="picker" id="date"  name="date" [(ngModel)]="newTransaction.date" placeholder="Choose a date" #date="ngModel" >
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                      </mat-form-field>
+                    </div>
+                  </div>
+
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label mt-2 ">
+                      <label  class="text-success"for="Description">Description</label>
+
+                    </div>
+                    <div class="col-sm 9">
+                     
+                      <div class="form-group">
+                        <textarea class="form-control" id="Description" rows="3"  name="Description" [(ngModel)]="newTransaction.description"></textarea>
+                      </div>
+
+                    </div>
+                  </div>
+              
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="abortNewTransaction()">Close</button>
+          <button type="submit" class="btn btn-primary" (click)="addTransaction()" [disabled]="invalidAmount"  data-dismiss="modal">Submit</button>
+        </div>
+  
+
+            
+      </form>
+                
+    </div>
+  </div>
+
+     
+
+</div>
+
+</div>
+      </div>
+    </div>
+  </div>  

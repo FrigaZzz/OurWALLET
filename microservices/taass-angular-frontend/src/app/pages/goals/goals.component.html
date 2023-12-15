@@ -1,0 +1,155 @@
+<div class="container-fluid">
+    
+    <div class="card shadow mb-4 mat-elevation-z8">    
+      <div class="card-body">
+          <section id="sample-table"  class="row">
+          
+              <div class="form-group col-xl-12 col-sm-12"> 
+                <div class="card shadow border-left-success py-2 ">
+                  <div class="card-body">
+                      <div class="row align-items-center no-gutters">
+                          <div class="col-auto mr-2">
+                              <div class="text-uppercase text-success font-weight-bold text-xm mb-1"><span> Goals for </span></div>
+                          </div>
+                          <div class="col-auto"><a class="btn-link" href="/dashboard"><h5>{{this.currentGroup?.name}}</h5></a></div>
+
+                            <mat-form-field class="col-sm-12 col-lg-12">
+                              <input #input matInput  placeholder="Search">
+                            </mat-form-field> 
+                           
+                      </div>
+                  </div>
+                </div>
+                
+              </div>
+
+           
+
+              <!--   ['select','id', 'name', 'startDate','deadLine','amountRequested','amountReached'];   -->
+
+              <div class="groups-management col-xl-12 col-sm-12">
+                <div class="mat-elevation-z8">
+                   
+                  <table mat-table matSortDisableClear [dataSource]="dataSource" matSort   matSortActive="id" matSortDirection="desc" class="w-100 pl-2 ">
+  
+                     <ng-container matColumnDef="select" sticky>
+                      <th mat-header-cell *matHeaderCellDef>
+                        <button mat-mini-fab color="success" class="btn  btn-success mr-1"  
+                                data-toggle="tooltip" data-placement="top" title="Create goal" 
+                                data-toggle="modal" data-target="#goalModal" (click)="createGoal()"
+                              >
+                          <i class="fa fa-plus " aria-hidden="true"></i>
+                        </button>
+                
+
+                      </th>
+                      <td mat-cell *matCellDef="let goal">
+                        <a mat-mini color="secondary" class=" btn mr-1" 
+                              data-toggle="tooltip" data-placement="top" title="View goal transactions" 
+                              [routerLink]="['/accounts',goal.account]"  
+                        ><i class="fas fa-search-dollar"></i></a>
+                      </td>
+                    </ng-container> 
+  
+                    <ng-container  matColumnDef="id">
+                      <th mat-header-cell [hidden]="true"   *matHeaderCellDef mat-sort-header> id </th>
+                      <td mat-cell  [hidden]="true" *matCellDef="let goal"> {{goal.id}} </td>
+                    </ng-container>
+                    
+                    <ng-container matColumnDef="name">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> name </th>
+                      <td mat-cell *matCellDef="let goal"> {{goal.name}} </td>
+                    </ng-container>
+  
+                    <ng-container matColumnDef="description">
+                      <th mat-header-cell [hidden]="true" *matHeaderCellDef mat-sort-header> Description </th>
+                      <td mat-cell [hidden]="true" *matCellDef="let row"> 
+                        <mat-form-field>
+                          <!-- <input matInput [readonly]="isEdit(row)"  value="{{row.description}}"> -->
+                          <input matInput [readonly]="true"  value="{{row.description}}">
+        
+                      </mat-form-field>
+                        <!-- <textarea readonly="true" class="form-control " [(ngModel)]="row.description" ></textarea> -->
+                       </td>
+                    </ng-container>
+
+
+                    <ng-container matColumnDef="startDate">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> startDate </th>
+                      <td mat-cell *matCellDef="let goal"> 
+                        <mat-form-field class="">
+                          <input  matInput [matDatepicker]="picker" [id]="goal.id" [readonly]="true" [(ngModel)]="goal.startDate "  name="date"   >
+                          <mat-datepicker-toggle [disabled]="true" matSuffix [for]="picker"></mat-datepicker-toggle>
+                          <mat-datepicker #picker></mat-datepicker>
+                        </mat-form-field> 
+
+                        <!-- {{goal.startDate| date:"longDate"}}  -->
+                      </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="deadLine">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> deadLine </th>
+                        <td mat-cell *matCellDef="let goal"> 
+                          <mat-form-field class="">
+                            <input  matInput [matDatepicker]="picker" [id]="goal.id2" [readonly]="true" [(ngModel)]="goal.deadLine "  name="date"   >
+                            <mat-datepicker-toggle [disabled]="true" matSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-datepicker #picker></mat-datepicker>
+                        </mat-form-field> 
+
+                        <!-- {{goal.deadLine| date:"longDate"}}-->
+                      </td> 
+                    </ng-container>
+                    
+                    <ng-container matColumnDef="amountRequested">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> amountRequested </th>
+                        <td mat-cell *matCellDef="let goal"> {{goal.amountRequested}} </td>
+                    </ng-container>
+
+
+                    <ng-container matColumnDef="status">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
+                      <td mat-cell *matCellDef="let goal ">
+                       <p [ngClass]="{'text-success': goal.status=='Completed', 'text-danger': goal.status=='Failed', 'text-primary': goal.status=='Active'  }" > {{goal.status}} </p>
+                        
+                      </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="amountReached">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> amountReached </th>
+                        <td mat-cell *matCellDef="let goal"> {{goal?.amountReached}} </td>
+                    </ng-container>
+                    
+                    <ng-container matColumnDef="actions">
+                      <th mat-header-cell *matHeaderCellDef>
+                      </th>
+
+                      <td mat-cell *matCellDef="let goal">
+                          <div  mat-mini-fab data-toggle="dropdown" aria-expanded="true"><i class="fas fa-ellipsis-v"></i></div>
+                              <div class="dropdown-menu shadow  " role="menu">
+                                  <button class="dropdown-item" role="presentation" href="#"><i class="fas fa-search fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Info</button>
+                                  <div class="dropdown-divider"></div>
+                                  <button 
+                                  data-toggle="tooltip" data-placement="top" title="Create goal" 
+                                  data-toggle="modal" data-target="#goalModal"
+                                  class="dropdown-item"   role="presentation" href="#" [disabled]="goal.status!='Active'" (click)="editGoal(goal)"><i class="fas fa-edit fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Edit</button>
+                                  <button class="dropdown-item"  role="presentation" href="#" (click)="deleteGoal(goal)"><i class="fas fa-trash fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Delete</button>
+                          </div>
+                        <!-- <button mat-mini-fab color="accent" data-toggle="modal" data-target="#beacon"><span class="fa fa-edit" ></span></button>         -->
+                      </td>
+
+                      
+                  </ng-container>
+  
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="changeCurrentSelection();  this.dataSource.sort = this.sort;"></tr>
+  
+                  </table>
+                  <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+  
+                </div>
+              </div>
+          </section>
+        </div>
+      </div>
+    </div>
+    <app-goal-modal [newGoal]="this.newGoal"></app-goal-modal>

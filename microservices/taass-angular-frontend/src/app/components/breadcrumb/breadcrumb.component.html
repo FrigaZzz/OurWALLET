@@ -1,0 +1,10 @@
+<nav class="breadcrumb">
+    <!-- <li class="breadcrumb-item"><a class="breadcrumb-text" [routerLink]="['/']" routerLinkActive="router-link-active" >Dashboard</a></li> -->
+    <li  class="breadcrumb-item active" *ngFor="let breadcrumb of breadcrumbs; let i=index">
+      <a  *ngIf="i!=breadcrumbs.length-1" [routerLink]="breadcrumb.url" class="breadcrumb-item " routerLinkActive="router-link-active">
+        {{ breadcrumb.label }}
+      </a>
+      <span *ngIf="i==breadcrumbs.length-1">  {{ breadcrumb.label }}</span>
+    </li>
+  </nav>
+  

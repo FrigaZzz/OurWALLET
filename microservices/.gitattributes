@@ -1,0 +1,31 @@
+# Default
+* text=auto
+
+# File di testo
+.gitignore text
+.gitkeep text
+.dockerignore text
+Dockerfile text
+browserlist
+*.java text
+*.properties text
+*.xml text
+*.conf text
+*.yml text
+*.css text
+*.html text
+*.js text eol=lf
+*.ts text eol=lf
+package*.json text eol=lf
+*.json text
+*.md text
+
+# File binari
+*.png binary
+*.jpg binary
+*.PNG binary
+*.JPG binary
+*.jpeg binary
+*.JPEG binary
+*.ico binary
+*.ICO binary

@@ -1,0 +1,178 @@
+
+
+
+<div class="container-fluid">
+  <form class="form-inline">
+    
+    <h1 class=" col-9 h3 mb-2 text-gray-800">
+      <strong *ngIf="this.account!=undefined">{{this.account.name}}</strong>
+      <strong *ngIf="this.account==undefined">All accounts</strong>
+      transactions
+    </h1>
+
+  </form>
+ 
+    
+<div class="card shadow mb-4 mat-elevation-z8">    
+  <div class="card-body">
+      <section id="sample-table" >
+        <div class=" row">
+          <div class="col-md-6 col-xl-3 mb-4">
+            <div class="card shadow border-left-success mr-2 ">
+              <div class="card-body">
+                  <div class="row align-items-center no-gutters ">
+                      <div class="">
+                          <div class="text-uppercase text-success font-weight-bold text-xs mb-1"><span>Earnings </span></div>
+                          <div class="text-dark text-sm font-weight-bold h5 mb-0"><i class="fas fa-euro-sign  text-black"></i><span>{{dataSource.totalEarnings$ | async}}</span></div>
+                      </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+            <div class="col-md-6 col-xl-3 mb-4">
+              <div class="card shadow border-left-danger">
+                <div class="card-body">
+                    <div class="row align-items-center no-gutters">
+                        <div class="">
+                            <div class="text-uppercase text-danger font-weight-bold text-xs mb-1"><span>Expanses</span></div>
+                            <div class="text-dark font-weight-bold h5 mb-0"><span>${{dataSource.totalExpanses$ | async}}</span></div>
+                        </div>
+                    </div>
+                </div>
+              </div>
+          </div>
+          <div class="col-md-6 col-xl-3 mb-4">
+
+                <div class="btn-group mr-2" role="group" aria-label="Second group" >
+                  <button type="button" class="btn  btn-success mr-1" data-toggle="tooltip" data-placement="top" title="Create transaction" data-toggle="modal" data-target="#transactionModal" (click)="addTransaction()">  <i class="fa fa-plus " aria-hidden="true"></i></button>
+                  <button type="button" [disabled]=" this.selection.selected.length==0" class="btn btn-danger mr-1"  data-toggle="tooltip" data-placement="top" title="Delete selected transactions" (click)="deleteTransaction()"><span class="fa fa-trash"></span></button>
+                  <button type="button" [disabled]=" !(this.selection.selected.length==1)" class="btn btn-warning mr-1" data-toggle="tooltip" data-placement="top" title="Edit transaction"data-toggle="modal" data-target="#transactionModal" (click)="editTransaction()" ><span class="fa fa-edit" ></span></button>
+                  <button type="button"  class="btn btn-dark" data-toggle="tooltip" data-placement="top" title="Edit transaction"data-toggle="modal" data-target="#transactionModal" (click)="editTransaction()" ><span class="fa fa-search" ></span></button>
+
+                </div>
+                <div class="btn-group mt-1" role="group" aria-label="Third group">
+                  <mat-form-field>
+                    <input #input matInput  placeholder="Search">
+                  </mat-form-field> 
+                 
+              </div>
+            </div>
+            <div class="col-md-6 col-xl-3 mb-4">
+              <h3>Results</h3>
+              <div class="btn-group" role="group" aria-label="Third group">
+          
+                <div class="">
+                  <div class="text-uppercase text-success font-weight-bold text-xs mb-1"><span>Earnings </span></div>
+                  <div class="text-dark text-sm font-weight-bold h5 mb-0"><i class="fas fa-euro-sign  text-black"></i><span>{{dataSource.earnings$ | async}}</span></div>
+              </div>
+              <div class="ml-3">
+                <div class="text-uppercase text-success font-weight-bold text-xs mb-1"><span>Expanses </span></div>
+                <div class="text-dark text-sm font-weight-bold h5 mb-0"><i class="fas fa-euro-sign  text-black"></i><span>{{dataSource.expanses$ | async}}</span></div>
+            </div>
+              </div>
+            
+            </div>
+
+                
+        </div>
+        <!-- <button mat-mini-fab color="warn" ><span class="fa fa-trash" (clicK)="print()"></span></button> -->
+
+        
+        <mat-progress-bar mode="indeterminate" *ngIf="dataSource.loading$ | async"></mat-progress-bar>
+        
+        <div class="example-container mat-elevation-z8">
+          <table mat-table [dataSource]="dataSource"  matSort matSortActive="date" matSortDirection="desc" matSortDisableClear class="w-100 col-12" >
+            <ng-container matColumnDef="select" sticky>
+              <th mat-header-cell *matHeaderCellDef>
+                <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? masterToggle(): null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()">
+                </mat-checkbox>
+              </th>
+              <td mat-cell *matCellDef="let row">
+                <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)">
+                </mat-checkbox>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="id">
+              <th mat-header-cell  *matHeaderCellDef mat-sort-header> ID </th>
+              <td mat-cell  *matCellDef="let row"> {{row.id}} </td>
+            </ng-container>
+  
+            <ng-container matColumnDef="category">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Category </th>
+              <td mat-cell *matCellDef="let row"> {{row.category?.name}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="description">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Description </th>
+              <td mat-cell *matCellDef="let row"> {{row.description}} </td>
+            </ng-container>
+  
+            <ng-container matColumnDef="accountSender">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> AccountFrom </th>
+              <td mat-cell *matCellDef="let row"> {{row.accountSender?.name}} </td>
+            </ng-container>
+  
+            <ng-container matColumnDef="accountReceived">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> AccountTo </th>
+              <td mat-cell *matCellDef="let row"> {{row.accountReceived?.name}} </td>
+            </ng-container>
+  
+
+            <ng-container matColumnDef="date">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Date </th>
+              <td mat-cell *matCellDef="let row"> {{row.date| date:'short'}} </td>
+            </ng-container>
+  
+            
+            <ng-container matColumnDef="amount" stickyEnd>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Amount </th>
+              <td mat-cell *matCellDef="let row">   
+                  <div *ngIf="!!this.account && (row.accountSender.id==this.account.id); else otherContent">
+                    - {{row.amount}} 
+                  </div>
+                  <ng-template #otherContent>
+                      <div>
+                        + {{row.amount}} 
+                      </div>
+                  </ng-template>
+              </td>
+              
+
+            </ng-container>
+            
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>
+              
+                
+              </th>
+              <td mat-cell *matCellDef="let account">
+                  <div  mat-mini-fab data-toggle="dropdown" aria-expanded="true"><i class="fas fa-ellipsis-v"></i></div>
+                      <div class="dropdown-menu shadow  " role="menu">
+                          <button class="dropdown-item" role="presentation" href="#"><i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Show</button>
+                          <div class="dropdown-divider"></div>
+                          <button class="dropdown-item"  [disabled]="this.type!='user'" role="presentation" href="#" (click)="deleteAccount(account)"><i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Delete</button>
+                  </div>
+                <!-- <button mat-mini-fab color="accent" data-toggle="modal" data-target="#beacon"><span class="fa fa-edit" ></span></button>         -->
+              </td>
+          </ng-container>   
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selection.toggle(row); this.dataSource.sort=this.sort"></tr>
+          </table>
+        </div>
+        <mat-paginator 
+        [pageSize]="25" 
+        [pageSizeOptions]="[5, 10, 25, 100, 200]"
+        #paginator 
+        [length]="dataSource.total$|async"
+        ></mat-paginator>
+      </section>
+    </div>
+  </div>
+</div>
+
+<app-transaction-modal [newTransaction]="this.newTransaction"></app-transaction-modal>
+
+ <!-- #region 
+  MODAL => creare componente a parte
+-->

@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jpa:entity-mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:java="http://jcp.org/en/jsr/detail?id=270" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jpa="http://java.sun.com/xml/ns/persistence/orm" ptype="MONOLITH" ppkg="com.mfr.taass.spring.stats.api" epkg="entities" v="5.2" rws="_157564473358392" Pws="_157564473358392" cws="_157564473358392" persistenceUnitName="DEFAULT_PU" sm="false" xs="false" id="_157564473358391" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd">
+    <jpa:entity compositePrimaryKeyClass="UserPK" abs="false" class="User" v="true" jbn="false" xre="false" m="false" rootElement="_157564473358391" id="_157564473495893">
+        <jpa:ath>matteo</jpa:ath>
+        <jpa:attributes>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="email" ft="false" id="_157564473495895">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:column unique="true" nullable="false" insertable="true" updatable="true"/>
+            </jpa:basic>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="password" id="_157564473495896">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="username" ft="false" id="_1575646465878279">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:bv>
+                    <jpa:nn/>
+                </jpa:bv>
+                <jpa:column unique="true" nullable="false" insertable="true" updatable="true"/>
+            </jpa:basic>
+            <jpa:basic attribute-type="Boolean" v="true" xvt="" name="payer" ft="false" id="_157606008357055">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:bv>
+                    <jpa:nn/>
+                </jpa:bv>
+                <jpa:column unique="false" nullable="false" insertable="true" updatable="true"/>
+            </jpa:basic>
+            <jpa:many-to-one optional="true" primaryKey="false" connected-entity-id="_157564473495999" connected-attribute-id="_157615722534234" v="true" xvt="" name="familyGroup" id="_157615722530333">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:bv>
+                    <jpa:nn/>
+                </jpa:bv>
+            </jpa:many-to-one>
+            <jpa:one-to-many orp="false" collection-type="java.util.List" cit="java.util.ArrayList" connected-entity-id="_1575644734959109" connected-attribute-id="_157590459642870" v="true" xvt="" name="accounts" id="_157590459642971">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:one-to-many>
+            <jpa:many-to-many own="true" collection-type="java.util.List" cit="java.util.ArrayList" connected-entity-id="_157564473495999" connected-attribute-id="_157605999350254" v="true" xvt="" name="commonFundGroups" id="_157605999348853">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:many-to-many>
+            <jpa:id attribute-type="Long" v="true" xvt="" name="id" id="_157564473495894">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:generated-value strategy="DEFAULT"/>
+            </jpa:id>
+        </jpa:attributes>
+        <jpa:nq e="false" name="User.findAll">
+            <jpa:query>Select e from User e</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="User.findByEmail">
+            <jpa:query>Select u from User u where u.email=:email</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="User.findByPassword">
+            <jpa:query>Select u from User u where u.password=:password</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="User.findByUsername">
+            <jpa:query>Select u from User u where u.username=:username</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="User.findByPayer">
+            <jpa:query>Select u from User u where u.payer=:payer</jpa:query>
+        </jpa:nq>
+        <jpa:table name="users"/>
+    </jpa:entity>
+    <jpa:entity compositePrimaryKeyClass="GroupsPK" abs="false" class="Groups" v="true" jbn="false" xre="false" m="false" rootElement="_157564473358391" id="_157564473495999">
+        <jpa:ath>matteo</jpa:ath>
+        <jpa:attributes>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="name" id="_1575644734959101">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+            <jpa:basic attribute-type="Boolean" v="true" xvt="" name="isFamilyGroup" ft="false" id="_157606054930758">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:column unique="false" nullable="false" insertable="true" updatable="true"/>
+            </jpa:basic>
+            <jpa:one-to-many orp="false" collection-type="java.util.List" cit="java.util.ArrayList" connected-entity-id="_1575644734959117" connected-attribute-id="_1575645851166246" v="true" xvt="" name="transactions" id="_1575645851167247">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:one-to-many>
+            <jpa:one-to-many orp="false" collection-type="java.util.List" cit="java.util.ArrayList" connected-entity-id="_1575646174832267" connected-attribute-id="_1575646208367274" v="true" xvt="" name="goals" id="_1575646208368275">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:one-to-many>
+            <jpa:one-to-many orp="false" collection-type="java.util.List" cit="java.util.ArrayList" connected-entity-id="_1575644734959113" connected-attribute-id="_157606269298660" v="true" xvt="" name="budgets" id="_157606269298761">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:one-to-many>
+            <jpa:one-to-many orp="false" collection-type="java.util.List" cit="java.util.ArrayList" connected-entity-id="_157564473495893" connected-attribute-id="_157615722530333" v="true" xvt="" name="familyMembers" id="_157615722534234">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:one-to-many>
+            <jpa:one-to-one own="true" orp="false" optional="true" primaryKey="false" connected-entity-id="_1575644734959109" v="true" xvt="" name="account" id="_157606046038057">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:one-to-one>
+            <jpa:many-to-many collection-type="java.util.List" cit="java.util.ArrayList" connected-entity-id="_157564473495893" connected-attribute-id="_157605999348853" v="true" xvt="" name="users" id="_157605999350254">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:many-to-many>
+            <jpa:id attribute-type="Long" v="true" xvt="" name="id" id="_1575644734959100">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:generated-value strategy="DEFAULT"/>
+            </jpa:id>
+        </jpa:attributes>
+        <jpa:nq e="false" name="Groupses.findAll">
+            <jpa:query>Select e from Groupses e</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Groupses.findByName">
+            <jpa:query>Select g from Groupses g where g.name=:name</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Groupses.findByIsFamilyGroup">
+            <jpa:query>Select g from Groupses g where g.isFamilyGroup=:isFamilyGroup</jpa:query>
+        </jpa:nq>
+        <jpa:table name="Groups"/>
+    </jpa:entity>
+    <jpa:entity compositePrimaryKeyClass="CategoryPK" abs="false" class="Category" v="true" jbn="false" xre="false" m="false" rootElement="_157564473358391" id="_1575644734959105">
+        <jpa:ath>matteo</jpa:ath>
+        <jpa:attributes>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="name" ft="false" id="_1575644734959107">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:column unique="false" nullable="false" insertable="true" updatable="true"/>
+            </jpa:basic>
+            <jpa:one-to-one own="true" orp="false" optional="true" primaryKey="false" connected-entity-id="_1575644734959105" v="true" xvt="" name="SuperCategory" id="_1575644966286191">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:one-to-one>
+            <jpa:id attribute-type="Long" v="true" xvt="" name="id" id="_1575644734959106">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:generated-value strategy="DEFAULT"/>
+            </jpa:id>
+        </jpa:attributes>
+        <jpa:nq e="false" name="superCategory.findAll">
+            <jpa:query>Select e from superCategory e</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="superCategory.findByName">
+            <jpa:query>Select c from superCategory c where c.name=:name</jpa:query>
+        </jpa:nq>
+    </jpa:entity>
+    <jpa:entity compositePrimaryKeyClass="AccountPK" abs="false" class="Account" v="true" jbn="false" xre="false" m="false" rootElement="_157564473358391" id="_1575644734959109">
+        <jpa:ath>matteo</jpa:ath>
+        <jpa:attributes>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="name" ft="false" id="_1575644734959111">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:column unique="false" nullable="false" insertable="true" updatable="true"/>
+            </jpa:basic>
+            <jpa:basic attribute-type="Boolean" v="true" xvt="" name="isEasyPay" ft="false" id="_1575644734959112">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:bv>
+                    <jpa:nn/>
+                </jpa:bv>
+                <jpa:column unique="false" nullable="false" insertable="true" updatable="true"/>
+            </jpa:basic>
+            <jpa:many-to-one optional="true" primaryKey="false" connected-entity-id="_157564473495893" connected-attribute-id="_157590459642971" v="true" xvt="" name="user" id="_157590459642870">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:many-to-one>
+            <jpa:one-to-many orp="false" collection-type="java.util.List" cit="java.util.ArrayList" connected-entity-id="_1575644734959117" connected-attribute-id="_1575645877255249" v="true" xvt="" name="transactions" id="_1575645877256250">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:one-to-many>
+            <jpa:one-to-many orp="false" collection-type="java.util.List" cit="java.util.ArrayList" connected-entity-id="_1575644734959117" connected-attribute-id="_1575646126898263" v="true" xvt="" name="transfers" id="_1575646126900264">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:one-to-many>
+            <jpa:one-to-one orp="false" optional="true" primaryKey="false" connected-entity-id="_1575646174832267" connected-attribute-id="_157615777685936" v="true" xvt="" name="goal" id="_157615777686037">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:one-to-one>
+            <jpa:id attribute-type="Long" v="true" xvt="" name="id" id="_1575644734959110">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:generated-value strategy="DEFAULT"/>
+            </jpa:id>
+        </jpa:attributes>
+        <jpa:nq e="false" name="Account.findAll">
+            <jpa:query>Select e from Account e</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Account.findByName">
+            <jpa:query>Select a from Account a where a.name=:name</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Account.findByIsEasyPay">
+            <jpa:query>Select a from Account a where a.isEasyPay=:isEasyPay</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Account.findByAttribute">
+            <jpa:query>Select a from Account a where a.attribute=:attribute</jpa:query>
+        </jpa:nq>
+    </jpa:entity>
+    <jpa:entity compositePrimaryKeyType="D" compositePrimaryKeyClass="BudgetPK" abs="false" class="Budget" v="true" jbn="false" xre="false" m="false" rootElement="_157564473358391" id="_1575644734959113">
+        <jpa:ath>matteo</jpa:ath>
+        <jpa:attributes>
+            <jpa:basic attribute-type="Long" v="true" xvt="" name="budgetAmount" ft="false" id="_1575644734959114">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:bv>
+                    <jpa:nn/>
+                </jpa:bv>
+                <jpa:column unique="false" nullable="false" insertable="true" updatable="true" precision="0"/>
+            </jpa:basic>
+            <jpa:many-to-one optional="true" primaryKey="true" connected-entity-id="_157564473495999" connected-attribute-id="_157606269298761" v="true" xvt="" name="groups" id="_157606269298660">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:many-to-one>
+            <jpa:many-to-one optional="true" primaryKey="true" connected-entity-id="_1575644734959105" v="true" xvt="" name="category" id="_157606319432566">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:many-to-one>
+        </jpa:attributes>
+        <jpa:nq e="false" name="Budget.findAll">
+            <jpa:query>Select e from Budget e</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Budget.findByBudgetAmount">
+            <jpa:query>Select b from Budget b where b.budgetAmount=:budgetAmount</jpa:query>
+        </jpa:nq>
+    </jpa:entity>
+    <jpa:entity compositePrimaryKeyClass="TransactionPK" abs="false" class="Transaction" v="true" jbn="false" xre="false" m="false" rootElement="_157564473358391" id="_1575644734959117">
+        <jpa:ath>matteo</jpa:ath>
+        <jpa:attributes>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="description" id="_1575644734959119">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+            <jpa:basic attribute-type="Long" v="true" xvt="" name="amount" ft="false" id="_1575644734959120">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:bv>
+                    <jpa:nn/>
+                </jpa:bv>
+                <jpa:column unique="false" nullable="false" insertable="true" updatable="true" precision="0"/>
+            </jpa:basic>
+            <jpa:many-to-one optional="true" primaryKey="false" connected-entity-id="_157564473495999" connected-attribute-id="_1575645851167247" v="true" xvt="" name="groups" id="_1575645851166246">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:bv>
+                    <jpa:nn/>
+                </jpa:bv>
+            </jpa:many-to-one>
+            <jpa:many-to-one optional="true" primaryKey="false" connected-entity-id="_1575644734959109" connected-attribute-id="_1575645877256250" v="true" xvt="" name="transferTargetAccount" id="_1575645877255249">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:many-to-one>
+            <jpa:many-to-one optional="true" primaryKey="false" connected-entity-id="_1575644734959109" connected-attribute-id="_1575646126900264" v="true" xvt="" name="account" id="_1575646126898263">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:bv>
+                    <jpa:nn/>
+                </jpa:bv>
+            </jpa:many-to-one>
+            <jpa:many-to-one optional="true" primaryKey="false" connected-entity-id="_1575644734959105" v="true" xvt="" name="category" id="_157615687701631">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:many-to-one>
+            <jpa:id attribute-type="Long" v="true" xvt="" name="id" id="_1575644734959118">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:generated-value strategy="DEFAULT"/>
+            </jpa:id>
+        </jpa:attributes>
+        <jpa:nq e="false" name="Transaction.findAll">
+            <jpa:query>Select e from Transaction e</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Transaction.findByDescription">
+            <jpa:query>Select t from Transaction t where t.description=:description</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Transaction.findByAmount">
+            <jpa:query>Select t from Transaction t where t.amount=:amount</jpa:query>
+        </jpa:nq>
+    </jpa:entity>
+    <jpa:entity compositePrimaryKeyClass="GoalPK" abs="false" class="Goal" v="true" jbn="false" xre="false" m="false" rootElement="_157564473358391" id="_1575646174832267">
+        <jpa:ath>matteo</jpa:ath>
+        <jpa:attributes>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="name" ft="false" id="_1575646246476276">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:bv>
+                    <jpa:nn/>
+                </jpa:bv>
+                <jpa:column unique="false" nullable="false" insertable="true" updatable="true"/>
+            </jpa:basic>
+            <jpa:basic attribute-type="java.util.Date" v="true" xvt="" name="deadline" ft="false" id="_1575646249910277">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:temporal>DATE</jpa:temporal>
+                <jpa:column unique="false" nullable="false" insertable="true" updatable="true"/>
+            </jpa:basic>
+            <jpa:basic attribute-type="Long" v="true" xvt="" name="amount" ft="false" id="_1575646282003278">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:column unique="false" nullable="false" insertable="true" updatable="true" precision="0"/>
+            </jpa:basic>
+            <jpa:many-to-one optional="true" primaryKey="false" connected-entity-id="_157564473495999" connected-attribute-id="_1575646208368275" v="true" xvt="" name="groups" id="_1575646208367274">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:bv>
+                    <jpa:nn/>
+                </jpa:bv>
+            </jpa:many-to-one>
+            <jpa:one-to-one own="true" orp="false" optional="true" primaryKey="false" connected-entity-id="_1575644734959109" connected-attribute-id="_157615777686037" v="true" xvt="" name="account" id="_157615777685936">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:bv>
+                    <jpa:nn/>
+                </jpa:bv>
+            </jpa:one-to-one>
+            <jpa:id attribute-type="Long" v="true" xvt="" name="id" id="_1575646174849268">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:generated-value strategy="DEFAULT"/>
+            </jpa:id>
+        </jpa:attributes>
+        <jpa:nq e="false" name="Goal.findAll">
+            <jpa:query>Select e from Goal e</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Goal.findByName">
+            <jpa:query>Select g from Goal g where g.name=:name</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Goal.findByDeadline">
+            <jpa:query>Select g from Goal g where g.deadline=:deadline</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Goal.findByAmount">
+            <jpa:query>Select g from Goal g where g.amount=:amount</jpa:query>
+        </jpa:nq>
+    </jpa:entity>
+    <jpa:c>
+        <ct>java.util.List</ct>
+        <ct>java.util.Set</ct>
+        <ct>java.util.Map</ct>
+        <ct>java.util.Collection</ct>
+        <cit>java.util.ArrayList</cit>
+        <cit>java.util.LinkedList</cit>
+        <cit>java.util.HashSet</cit>
+        <cit>java.util.TreeSet</cit>
+        <cit>java.util.HashMap</cit>
+    </jpa:c>
+    <jpa:wsl>
+        <jpa:ws n="Main" id="_157564473358392">
+            <i ref="_1575644734959105" x="62" y="-14"/>
+            <i ref="_1575646174832267" x="854" y="264"/>
+            <i ref="_1575644734959113" x="286" y="-102"/>
+            <i ref="_157564473495999" x="476" y="-8"/>
+            <i ref="_157564473495893" x="100" y="205"/>
+            <i ref="_1575644734959109" x="875" y="-44"/>
+            <i ref="_1575644734959117" x="565" y="-273"/>
+        </jpa:ws>
+    </jpa:wsl>
+</jpa:entity-mappings>

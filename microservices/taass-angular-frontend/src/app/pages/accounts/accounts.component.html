@@ -1,0 +1,191 @@
+
+
+
+<div class="container-fluid">
+  <form class="form-inline alert-success alert card-body">
+    <div class="col-xl-12">
+      <button class="btn btn-success" (click)="previousTable()" >
+        <i class="fas fa-arrow-left">Back</i>
+      </button>
+    </div>
+
+    <div class="row ">
+
+      <h1 class=" col-md-6 col-xl-6 h3 mb-2 text-gray-800 card-body">
+
+        <strong *ngIf="this.account!=undefined">{{this.account.name}}</strong>
+        <strong *ngIf="this.account==undefined">All accounts</strong>
+        transactions
+      </h1>
+      <div class="col-lg-6 col-xl-6 mt-2">
+        <div class="btn-group" role="group" aria-label="Third group">
+          <div class="ml-3">
+            <div class="text-uppercase text-success font-weight-bold text-xs mb-1"><span>Earnings </span></div>
+            <div class="text-dark text-sm font-weight-bold h5 mb-0"><i class="fas fa-euro-sign  text-black"></i><span>{{dataSource.totalEarnings$ | async}}</span></div>
+        </div>
+        <div class="ml-3">
+          <div class="text-uppercase text-success font-weight-bold text-xs mb-1"><span> </span></div>
+          <div class="text-dark text-sm font-weight-bold h5 mt-3"><i class="fas fa-minus  text-black"></i></div>
+      </div>
+        <div class="ml-3">
+          <div class="text-uppercase text-danger font-weight-bold text-xs mb-1"><span>Expenses </span></div>
+          <div class="text-dark text-sm font-weight-bold h5 mb-0"><i class="fas fa-euro-sign  text-black"></i><span>{{dataSource.totalExpanses$ | async}}</span></div>
+      </div>
+      <div class="ml-3">
+        <div class="text-uppercase text-success font-weight-bold text-xs mb-1"><span> </span></div>
+        <div class="text-dark text-sm font-weight-bold h5 mb-3"><i class="fas fa-equals  text-black"></i></div>
+    </div>
+      <div class="ml-3">
+        <div class="text-uppercase text-success font-weight-bold text-xs mb-1"><span>Balance </span></div>
+        <div class="text-dark text-sm font-weight-bold h5 mb-0"><i class="fas fa-euro-sign  text-black"></i><span>{{dataSource.balance$ | async}}</span></div>
+     </div>
+        </div>
+      </div>
+    </div>
+   
+  
+  </form>
+ 
+    
+<div class="card shadow mb-4 mat-elevation-z8">    
+  <div class="card-body p-2">
+      <section id="sample-table" >
+          <div class=" clearfix">
+              
+                <mat-form-field class="col-lg-4 ">
+                  <input #input matInput  placeholder="Search">
+                </mat-form-field> 
+                <div class="btn-group  col-lg-3" role="group" aria-label="Second group" >
+                  <button type="button" class="btn  btn-dark mr-1" data-toggle="tooltip" data-placement="top" title="Refresh transactions"  (click)="loadTransactionsPage()">  <i class="fa fa-sync " aria-hidden="true"></i></button>
+                  <button type="button" class="btn  btn-success mr-1" data-toggle="tooltip" data-placement="top" title="Create transaction" data-toggle="modal" data-target="#transactionModal" (click)="addTransaction()">  <i class="fa fa-plus " aria-hidden="true">Add</i></button>
+                  <button type="button" [disabled]=" this.selection.selected.length==0" class="btn btn-danger mr-1"  data-toggle="tooltip" data-placement="top" title="Delete selected transactions" (click)="deleteTransactions()"><span class="fa fa-trash">Remove</span></button>
+                  <button type="button" [disabled]=" !(this.selection.selected.length==1)" class="btn btn-warning mr-1" data-toggle="tooltip" data-placement="top" title="Edit transaction"data-toggle="modal" data-target="#transactionModal" (click)="editTransaction()" ><span class="fa fa-edit" >Edit</span></button>
+
+                  <button class="btn btn-default"><span class="">{{this.selection.selected.length}}/{{this.dataSource.data().length}}</span>
+                  </button>
+                </div>
+
+                <button type="button" class="btn btn-default dropdown-toggle  col-md-3 float-right mt-3" (click)=openDialog()>
+                  Filters <span class="caret"></span>
+                </button>
+          </div>
+        
+        <mat-progress-bar mode="indeterminate" *ngIf="dataSource.loading$ | async"></mat-progress-bar>
+        
+        <div class="example-container mat-elevation-z8">
+          
+          <table mat-table [dataSource]="dataSource"  matSort matSortActive="date" matSortDirection="asc" matSortDisableClear class="w-100 col-12" >
+            <ng-container matColumnDef="select" sticky>
+              <th mat-header-cell *matHeaderCellDef>
+                <mat-checkbox  (change)="$event ? masterToggle(): null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()">
+                </mat-checkbox>
+              </th>
+              <td mat-cell *matCellDef="let row">
+                <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)">
+                </mat-checkbox>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="id">
+              <th mat-header-cell  [hidden]="true" *matHeaderCellDef mat-sort-header> ID </th>
+              <td mat-cell [hidden]="true" *matCellDef="let row"> {{row.id}} </td>
+            </ng-container>
+  
+            <ng-container matColumnDef="category">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Category </th>
+              <td mat-cell *matCellDef="let row"> 
+                <!-- <select  id="category" class="btn-default" name="category" #category="ngModel" [(ngModel)]="row.category" [compareWith]="compareById">
+                  <option *ngFor="let category of categories" [ngValue]="category">
+                   {{category.name}}
+                 </option>    
+               </select> -->
+
+                   {{row.category.name}}
+
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="description">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Description </th>
+              <td mat-cell *matCellDef="let row"> 
+                <mat-form-field>
+                  <!-- <input matInput [readonly]="isEdit(row)"  value="{{row.description}}"> -->
+                  <input matInput [readonly]="true"  value="{{row.description}}">
+
+              </mat-form-field>
+                <!-- <textarea readonly="true" class="form-control " [(ngModel)]="row.description" ></textarea> -->
+               </td>
+            </ng-container>
+  
+            <ng-container matColumnDef="accountSender">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> AccountFrom </th>
+              <td mat-cell *matCellDef="let row"> {{row.accountSender?.name}} </td>
+            </ng-container>
+  
+            <ng-container matColumnDef="accountReceived">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> AccountTo </th>
+              <td mat-cell *matCellDef="let row"> {{row.accountReceived?.name}} </td>
+            </ng-container>
+  
+
+            <ng-container matColumnDef="date">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Date </th>
+              <td mat-cell *matCellDef="let row"> 
+                <!-- {{row.date| date:'longDate'}}  -->
+                <!-- <mat-form-field class="">
+                  <input  matInput [matDatepicker]="picker" [id]="row.id" [readonly]="isEdit(row)" [(ngModel)]="row.date "  name="date"   >
+                  <mat-datepicker-toggle [disabled]="isEdit(row)" matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>               -->
+
+                <mat-form-field class="">
+                  <input  matInput [matDatepicker]="picker" [id]="row.id" [readonly]="true" [(ngModel)]="row.date "  name="date"   >
+                  <mat-datepicker-toggle [disabled]="true" matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field> 
+              </td>
+            </ng-container>
+  
+            
+            <ng-container matColumnDef="amount" stickyEnd>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Amount </th>
+              <td mat-cell *matCellDef="let row">   
+                <!-- <input id="amount" step="1"  type="number" name="newamount" #newamount="ngModel" class="form-control" aria-label="Amount" [(ngModel)]="row.amount">             -->
+                  {{row.amount}}
+              </td>
+              
+
+            </ng-container>
+            
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>
+                 
+                <!-- <button type="button" [disabled]=" !(this.selection.selected.length==1)" class="btn btn-warning mr-1" data-toggle="tooltip" data-placement="top" title="Edit transaction"data-toggle="modal" data-target="#transactionModal" (click)="editTransaction()" ><span class="fa fa-edit" >Edit</span></button> -->
+
+              </th>
+              <td mat-cell *matCellDef="let row">
+                <!-- <button type="button" class="btn-mini  btn-success mr-1"  *ngIf="this.selection.selected.length==1 &&row.id==this.selection.selected[0].id" data-toggle="tooltip" data-placement="top" title="Save changes" data-toggle="modal" data-target="#transactionModal" (click)="addTransaction()">  <i class="fas fa-check-circle" aria-hidden="true">Save</i></button> -->
+
+                <!-- <button mat-mini-fab color="accent" data-toggle="modal" data-target="#beacon"><span class="fa fa-edit" ></span></button>         -->
+              </td>
+          </ng-container>   
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="this.dataSource.sort=this.sort"></tr>
+          </table>
+        </div>
+        <mat-paginator 
+        [pageSize]="25" 
+        [pageSizeOptions]="[5, 10, 25, 100, 200]"
+        #paginator 
+        [length]="dataSource.total$|async"
+        ></mat-paginator>
+      </section>
+    </div>
+  </div>
+</div>
+
+<app-transaction-modal [newTransaction]="this.newTransaction"  (change)="update($event)" > </app-transaction-modal>
+
+ <!-- #region 
+  MODAL => creare componente a parte
+-->

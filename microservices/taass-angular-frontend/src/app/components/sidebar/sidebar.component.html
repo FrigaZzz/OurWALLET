@@ -1,0 +1,84 @@
+<nav class="navbar navbar-dark align-items-start sidebar sidebar-dark  bg-primary p-0  " id="sidebar"  [ngClass]="{'hidden': sidebarService.hideSideNav }">
+    <div class="container-fluid p-0" >
+        <a class="navbar-brand d-flex row sidebar-brand mb-2 " [routerLink]="['/']" routerLinkActive="router-link-active" >
+            <div class="sidebar-brand-icon rotate-n-15 col-sm-12 ml-3"><i class="fas fa-laugh-wink"></i></div>
+            <div class="sidebar-brand-text col-12 "><span id="nameapp" >ourWallet</span></div>
+        </a>
+
+        <ul class="nav navbar-nav text-light show"  id="accordionSidebar" >
+            <div class="dropdown-divider"></div>
+
+            <li class="nav-item" role="presentation"><a class="nav-link active" [routerLink]="['/dashboard']" routerLinkActive="router-link-active" ><i class="fas fa-tachometer-alt"></i><span  >Dashboard</span></a></li>
+            <li class="nav-item" role="presentation"><a class="nav-link" [routerLink]="['/dashboard']"><i class="fas fa-user"></i><span   >Profile</span></a></li>
+            
+            <li class="nav-item" role="presentation"><a class="nav-link" [routerLink]="['/members']" ><i class="fas fa-table"></i><span   >Members</span></a></li>
+         
+            <li class="nav-item" role="presentation"><a class="nav-link"  [routerLink]="['/goals']" ><i class="fas fa-bullseye"></i><span  >Goals</span></a></li>
+            <li class="nav-item" role="presentation"><a class="nav-link"  [routerLink]="['/budgets']" ><i class="fas fa-bullseye"></i><span  >Budgets</span></a></li>
+
+            <!-- <li class="nav-item" role="presentation"><a class="nav-link" [routerLink]="['/accounts']"><i class="fas fa-user-circle"></i><span   >Accounts</span></a> -->
+            
+            <li class="nav-item accordion" id="accordionExample" role="presentation">
+                <a class="btn nav-link" data-toggle="collapse" data-target="#collapseAccounts" aria-expanded="false" aria-controls="collapseAccounts"><i class="fas fa-user-circle"></i><span   >Accounts</span></a>
+                
+                <div id="collapseAccounts" class="collapse " aria-labelledby="headingOne" data-parent="#accordionExample">
+                    <li class="nav-item accordion" id="accordionGroups" role="presentation">
+
+                    <a class="btn nav-link" data-toggle="collapse" data-target="#useracc" aria-expanded="false" aria-controls="collapseAccounts"><i class="fas fa-user-circle"></i><span   >User Accounts</span></a>
+                    <div id="useracc" class="collapse " aria-labelledby="headingOne" data-parent="#accordionGroups">
+                        <!-- <li class="nav-item" role="presentation"><a class="nav-link"  [routerLink]="['/accounts']" [queryParams]="{type: 'user'}" ><i class="fas fa-border-all"></i><span  >Show all</span></a></li> -->
+                        <div *ngIf="userAccounts$ | async; let userAccounts; ">
+                            <li *ngFor="let account of userAccounts.slice(0,3)" class="nav-item" role="presentation"><a class="nav-link"  [routerLink]="['/accounts',account.id]" ><i class="fas fa-angle-double-right"></i><span  >{{account.name}}</span></a></li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link"  [routerLink]="['/accounts']" [queryParams]="{type: 'user'}" >
+                                    <i class="fas fa-border-all"></i>
+                                     <span *ngIf="userAccounts.length>3" >Show Others</span>
+                                     <span *ngIf="userAccounts.length<=3" >Show all</span>
+                                </a>
+                            </li>
+                        </div>
+
+                     </div>
+
+                    <a *ngIf="(this.currentGroup?.isFamilyGroup==true)" class="btn nav-link" data-toggle="collapse" data-target="#familyacc" aria-expanded="false" aria-controls="familyacc"><i class="fas fa-user-circle"></i><span   >Family Accounts</span></a>
+                    <div id="familyacc" class="collapse " aria-labelledby="headingOne" data-parent="#accordionGroups">
+                        <!-- <button type="button" class="btn nav-item text-light"  ><span><i class="fas fa-plus-circle text-light "></i></span> Create</button>  -->
+                        <!-- <li class="nav-item" role="presentation"><a class="nav-link"  [routerLink]="['/accounts']" [queryParams]="{type: 'family'}" ><i class="fas fa-border-all"></i><span  >Show all</span></a></li> -->
+                        <div *ngIf="familyAccounts$ | async; let familyAccounts; ">
+                            <li *ngFor="let account of familyAccounts.slice(0,3)" class="nav-item" role="presentation"><a class="nav-link"  [routerLink]="['/accounts',account.id]" ><i class="fas fa-angle-double-right"></i><span  >{{account.name}}</span></a></li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link"  [routerLink]="['/accounts']" [queryParams]="{type: 'family'}" >
+                                    <i class="fas fa-border-all"></i>
+                                     <span *ngIf="familyAccounts.length>3" >Show Others</span>
+                                     <span *ngIf="familyAccounts.length<=3" >Show all</span>
+                                </a>
+                            </li>
+                        </div>
+                    </div>
+
+                    <a *ngIf="!(this.currentGroup?.isFamilyGroup==true)" class="btn nav-link" data-toggle="collapse" data-target="#groupacc" aria-expanded="false" aria-controls="groupacc"><i class="fas fa-user-circle"></i><span   >Common Funds Accounts</span></a>
+                    <div  id="groupacc" class="collapse " aria-labelledby="headingOne" data-parent="#accordionGroups">
+                        <!-- <button type="button" class="btn nav-item text-light"  ><span><i class="fas fa-plus-circle text-light "></i></span> Create</button>  -->
+                        <!-- <li class="nav-item" role="presentation"><a class="nav-link"  [routerLink]="['/accounts']" [queryParams]="{type: 'funds'}" ><i class="fas fa-border-all"></i><span  >Show all</span></a></li> -->
+                        <div *ngIf="commonGroupAccounts$ | async; let commonGroupAccounts; ">
+                            <li *ngFor="let account of commonGroupAccounts.slice(0,3)" class="nav-item" role="presentation"><a class="nav-link"  [routerLink]="['/accounts',account.id]" ><i class="fas fa-angle-double-right"></i><span  >{{account.name}}</span></a></li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link"  [routerLink]="['/accounts']" [queryParams]="{type: 'funds'}" >
+                                    <i class="fas fa-border-all"></i>
+                                     <span *ngIf="commonGroupAccounts.length>3" >Show Others</span>
+                                     <span *ngIf="commonGroupAccounts.length<=3" >Show all</span>
+                                </a>
+                            </li>
+                        </div>
+                    </div>
+                </li>
+                
+                </div>
+            
+            </li>
+            
+         
+        </ul>
+       
+    </div>
+</nav>

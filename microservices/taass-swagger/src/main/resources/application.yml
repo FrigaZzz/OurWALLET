@@ -1,0 +1,35 @@
+---
+info:
+  component: Default Single Swagger Document Server for MicroService
+
+spring:
+  profiles: default
+
+server:
+  port: 8085
+
+documentation: 
+  baseurl: http://localhost
+  swagger: 
+    services:   
+      - 
+        name: Auth - Api
+        url: http://localhost:8081/api/v2/api-docs?group=auth-api
+        version: 1.0
+      - 
+        name: Group - Api
+        url: http://localhost:8082/api/v2/api-docs?group=group-api
+        version: 1.0
+      - 
+        name: Transactions - Api
+        url: http://localhost:8083/api/v2/api-docs?group=transaction-api
+        version: 1.0
+        
+      - 
+        name: Stats - Api
+        url: http://localhost:8084/api/stats/v2/api-docs?group=stats-api
+        version: 1.0
+        
+
+ 
+    

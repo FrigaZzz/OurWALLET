@@ -1,0 +1,98 @@
+<h2 mat-dialog-title>Filter transactions</h2>
+
+<div class="alert alert-danger alert-dismissible fade show" role="alert" *ngIf="this.invalidAmount">
+    Please insert a valid number
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="this.invalidAmount=false">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<mat-dialog-content>
+
+    <div  class="row">
+        <mat-form-field >
+            <input matInput
+                (input)="verify($event.target.value,0)"
+                [(ngModel)]="data.minAmount"
+                placeholder="Min amount"
+                >
+    
+        </mat-form-field>
+     
+
+        <mat-form-field>
+    
+            <input matInput
+                (input)="verify($event.target.value,1)"
+                [(ngModel)]="data.maxAmount"
+                placeholder="Max amount"
+                >
+    
+        </mat-form-field>
+    
+    </div>
+    
+   <div class="row">
+
+    <mat-form-field>
+
+        <label>from Date</label>
+        <input matInput [matDatepicker]="myDatepicker"
+        [(ngModel)]="data.fromDate"
+
+            >
+
+        <mat-datepicker-toggle matSuffix
+                               [for]="myDatepicker">
+
+        </mat-datepicker-toggle>
+
+        <mat-datepicker #myDatepicker></mat-datepicker>
+
+    </mat-form-field>
+
+    <mat-form-field>
+        <label>to Date</label>
+
+        <input matInput [matDatepicker]="myDatepicker2"
+        [(ngModel)]="data.toDate"
+
+            >
+
+        <mat-datepicker-toggle matSuffix
+                               [for]="myDatepicker2">
+
+        </mat-datepicker-toggle>
+
+        <mat-datepicker #myDatepicker2></mat-datepicker>
+
+    </mat-form-field>
+
+   
+
+   </div>
+
+    
+
+</mat-dialog-content>
+
+<mat-dialog-actions>
+
+    <button class="mat-raised-button mdDialogClose matDialogClose"
+    matDialogClose
+            (click)="close()">
+        Close
+    </button>
+
+    <button class="mat-raised-button mat-primary"
+            (click)="save()"
+            type="submit"
+            [disabled]="invalidAmount"
+            >
+        Save
+    </button>
+    <button class="mat-raised-button mat-primary"
+            (click)="reset()">
+        Reset
+    </button>
+
+</mat-dialog-actions>

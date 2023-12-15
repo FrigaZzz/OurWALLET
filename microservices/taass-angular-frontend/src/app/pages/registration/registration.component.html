@@ -1,0 +1,81 @@
+    <div class="container">
+        <div class="card shadow-lg o-hidden border-0 my-5">
+            <div class="card-body p-0">
+                <div class="row">
+                    <div class="col-lg-5 d-none d-lg-flex">
+                        <div class="flex-grow-1 bg-register-image" style="background-image: url(&quot;assets/img/dogs/image2.jpeg&quot;);"></div>
+                    </div>
+                    <div class="col-lg-7">
+                        <div class="p-5">
+                            <div class="text-center">
+                                <h4 class="text-dark mb-4">Create an Account!</h4>
+                            </div>
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert" *ngIf="errors">
+                                {{errors}}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+
+                            <div class="alert alert-dismissible alert-dismissible fade show" role="alert" *ngIf="success">
+                                Account registered with success, you can now 
+                                <a [routerLink]="['/login']" >Login!</a>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <form class="user" #f="ngForm" >
+                                <div class="form-group row">
+                                    <div class="col-sm-12  ">
+                                        <input class="form-control form-control-user" type="text" id="username" placeholder="Username"  id="username" name="username" #username="ngModel" [(ngModel)]="user.username" required autofocus>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <input required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$"   class="form-control form-control-user" type="email"  aria-describedby="emailHelp" placeholder="Email Address" id="email" name="email" #email="ngModel" [(ngModel)]="user.email" >
+                                    <div *ngIf="email.errors &&(email.touched || email.dirty)" class="aler alert-danger">
+                                        <div [hidden]="!email.errors?.pattern">
+                                          Invalid email
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-6 mb-3 mb-sm-0">
+                                        <input required class="form-control form-control-user" type="password"  placeholder="Password" id="password" name="password" #password="ngModel" [(ngModel)]="user.password">
+                                        <div *ngIf="password.invalid && ( password.dirty || password.touched)  ">
+                                                <div class="alert-danger" *ngIf="password.errors.required">
+                                                    Password field mustn't be empty
+                                                </div>
+                                        </div>
+                                    </div>
+
+                                    
+                                    <div class="col-sm-6">
+                                        <input required class="form-control form-control-user" type="password"  placeholder="Repeat Password" name="password_repeat" #password_repeat="ngModel" [(ngModel)]="pass">  
+                                        <div *ngIf="password_repeat.dirty && password_repeat.touched && password.value!=password_repeat.value">
+                                                <div class="alert-danger">
+                                                    Password doesn't match
+                                                </div>
+                                            </div>
+        
+                                            <div *ngIf=" password_repeat.invalid &&password_repeat.dirty && password_repeat.touched ">
+                                                <div class="alert-danger" *ngIf="password_repeat.errors.required">
+                                                    Confirm your password
+                                                </div>
+                                            </div>
+                                    </div>
+                                    
+                                </div>
+                                    <button class="btn btn-primary btn-block text-white btn-user"  [disabled]="f.invalid || password.value!=password_repeat.value"  type="submit" (click)="signUp()">
+                                        Register Account
+                                    </button>
+                                <hr><button  (click)="googleSignUp()"class="btn btn-primary btn-block text-white btn-google btn-user" role="button"><i class="fab fa-google"></i>&nbsp; Register with Google</button><a class="btn btn-primary btn-block text-white btn-facebook btn-user" role="button"><i class="fab fa-facebook-f"></i>&nbsp; Register with Facebook</a>
+                               
+                            </form>
+                            <div class="text-center"><a class="small" href="forgot-password.html">Forgot Password?</a></div>
+                            <div class="text-center"><a class="small" routerLink='/login' href="#">Already have an account? Login!</a></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

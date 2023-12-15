@@ -1,0 +1,307 @@
+import { Injectable } from '@angular/core';
+import { TransactionInterface, Transaction } from '../types/Transaction';
+import { HttpParams, HttpClient } from '@angular/common/http';
+import { map } from 'rxjs/operators';
+import { AccountInterface } from '../types/Account';
+import { BehaviorSubject ,  Observable ,  SubscriptionLike as ISubscription, of } from 'rxjs';
+import { AccountService } from './account.service';
+import { BudgetService } from './budget.service';
+import { CategoriesService } from './categories.service';
+
+const API_PATH = '/api/accounts';
+const DEBUG=true
+
+@Injectable({
+  providedIn: 'root'
+})
+/**
+ * Idee per l'implementazione:
+ *  1. si mantiene una mappa "ID ACCOUNT" - "TRANSAZIONI" di ogni account dell'utente attuale ed una mappa anche per il gruppo selezionato
+ *  2. si utilizzano gli oggetti Account salvati dentro ad AccountInterface e li si riempie ( quindi sia gli Account dell'utente sia gli Account del gruppo)
+ *  3. si mantiene una sola mappa "ID ACCOUNT" - "TRANSAZIONI" che si carica in base al routing dell'utente (se visualizza un gruppo allora carichiamo quelle)
+ *  4. si mantengono aggiornato solo gli oggetti Account attualemente utilizzati (dell'Account dell'utente oppure degli account del gruppo selezionato)
+ *  Ovviamente 3 e 4 rendono meno pesante l'app, però 4 ci obbliga a toccare anche gli altri vettori ( cioè scaricare quello pieno) quindi 3 risulta più efficiente.
+ *  Stesso ragionamento vale per 1 e 2, quindi 1 è più efficiente di 2.
+ *  Inoltre se scegliamo 3, quando l'utente vuole effettuare un trasferimento dal proprio conto verso il gruppo, possiamo evitare di dover anche manipolare 
+ *  ed aggiornare la mappa delle sue transazioni. Infatti quando l'utente tornerà a visualizzare la sua dashboard o i propri conti, Angular provvederà a 
+ *  ricaricare le transazioni relative ai suoi conti. Sono infatti le transazioni gli oggetti "più pensati" per l'applicazione 
+ *  (in base a quante sono "scaricate")
+ * 
+ *  NOTA: tutto questo ragionamento presuppone la possibilità di trasferire FONDI da un account personale ad un account gruppo. Quando però il gruppo visualizzato
+ *  è un gruppo famiglia questo genere di trasferimento non dovrebbe essere possibile ( cioè è equivalente a ricaricare il proprio account personale siccome 
+ *  il gruppo famiglia considera tutti gli account che partecipano)
+ * 
+ *  Di seguito implemento 3 
+ */
+export class TransactionService {
+
+  private transactionsIDs=0
+
+  private transactionSub=new Array<ISubscription>();
+  
+  private _selectedTransactionsSubject = new BehaviorSubject<Map<string,Array<TransactionInterface>>>(new Map());
+  //private _transactionsSubject = new BehaviorSubject<Map<string,Array<TransactionInterface>>>(new Map());
+
+  public selectedTransactions = this._selectedTransactionsSubject.asObservable();
+  //public transactions = this._transactionsSubject.asObservable();
+
+  private transactionsData=new Array<TransactionInterface>();
+
+  /**
+   * 
+   * @param http 
+   * @param accountService l'idea è che le transazioni sono legate alla rotta 
+   */
+  constructor(
+    private http:HttpClient,
+    private budgetService: BudgetService,
+    private accountService: AccountService,
+    private categoriesService:CategoriesService
+
+    ) 
+    { 
+
+      // this.transactionSub.push(this.budgetService.budgets.subscribe(
+      //   budgets=>{
+      //     let periodStart=Date.now()
+      //     let periodEnd=Date.now()
+      //     budgets.forEach(budget=>{
+      //         if(budget.startDate<periodStart)
+      //           periodStart=budget.startDate
+      //         if(budget.endDate>periodEnd)
+      //           periodEnd=budget.endDate
+      //       }
+      //     )
+          // this.transactionSub.push(this.accountService.accounts.subscribe(
+          //   accounts=>{
+          //     accounts.forEach(
+          //       account=>{
+          //         this.transactionSub.push(this.retrieveTransactions(account.id+"","date",/*periodStart, periodEnd*/0,150).subscribe(
+          //           accountTransactions=>{
+          //             let map=this._transactionsSubject.value
+          //             map.set(account.id+"",accountTransactions.get(account.id+""))
+          //             this._transactionsSubject.next(map);
+          //           }
+          //         ))
+          //       }
+          //     )
+          //   }
+          // ))
+      //   })
+      // )
+
+      // this.transactionSub.push(this.budgetService.selectedBudgets.subscribe(
+      //   budgets=>{
+      //     let periodStart=Date.now()
+      //     let periodEnd=Date.now()
+      //     budgets.forEach(budget=>{
+      //         if(budget.startDate<periodStart)
+      //           periodStart=budget.startDate
+      //         if(budget.endDate>periodEnd)
+      //           periodEnd=budget.endDate
+      //       }
+      //     )
+          this.transactionSub.push(this.accountService.subscribedAccounts.subscribe(
+            accounts=>{
+              accounts.forEach(
+                account=>{
+                  this.transactionSub.push(this.retrieveTransactions(account.id+"","date"/*periodStart, periodEnd*/,0,300).subscribe(
+                    accountTransactions=>{
+                      let map=this._selectedTransactionsSubject.value
+                      map.set(account.id+"",accountTransactions.get(account.id+""))
+                      this._selectedTransactionsSubject.next(map);
+
+                    }
+                  ))
+                }
+              )
+            }
+          ))
+      //   })
+      // )
+
+  }
+
+  ngOnInit() {
+
+  }
+
+  /**
+  * 
+  * @param account        L'utente potrebbe volere solo le transazioni relative ad un conto, quindi carichiamo queste
+  * @param periodStart    -
+  * @param periodEnd      -
+  *                       La query sul DB ovviamente prenderà tutte le transazioni del conto, e darà in output { TOT: # TOTALE RISULTATI, TRC: [ ... ] }
+  *                       A seconda di come è paginata la tabella delle transazioni dobbiamo visualizzare e scaricare un tot di transazioni. 
+  *                       Manteniamo di base un buffer di 50 transazioni per ogni conto.
+  *                       Quando l'utente cambia paginazione verificheremo che il #transazioni è sufficiente ad essere visualizzato interamente nella pagina 
+  *                       attuale della tabella, se però (#transazioniRimanenti % paginazione) !== 0 obblighiamo ad un fetch. 
+  *                       Il fetch delle ulteriori transazioni avrà come offset il #transazioni_attuali e come limit (#transazioni_attuali + paginazione)
+  *                       Ovviamente limit sarà MAX(TOTALE RISULTATI, (#transazioni_attuali + paginazione) ) oppure lasciamo questo compito al server 
+  *                       (credo che mysql non si lamenta se LIMIT è tanto maggiore rispetto all'output)
+  *                                
+  * offset  INDEX         
+  * limit   INDEX
+  * order   param
+  * 
+  * 
+  *                       NOTA: forse ogni qualvolta si accede alla pagina di un conto è necessario RI FETCHARE le transazioni, questo perché magari se si tratta 
+  *                       di un CONTO di un "gruppo COMUNE" possono essere state recentemente registrate delle transazioni. Inoltre siccome anche il CLIENT 
+  *                       ANDROID  può effettuare transazioni è meglio evitare di restare con dati "vecchi".
+  *                       Inoltre, se consideriamo i BUDGET e i GOAL risulta quasi necessario conformare il fetch delle transazioni ai periodi di validità di questi 
+  *                       obiettivi. Infatti dobbiamo permette l'inserimento di transazioni solo fintanto che sia rispettato l'amount settato dal budget e bisogna 
+  *                       tracciare ogni transazione "di risparmio" per un GOAL, per vedere se il GOAL è stato raggiunto (così da mandare una notifica).
+  *                         
+  *                       Quindi in realtà questo servizio deve necessariamente scaricare le transazioni dei conti del gruppo attualmente visualizzato tali che rientrano
+  *                       nel più largo periodo di validità di V budget U V goal.
+  *                       >>> Facciamo fare il controllo sulla creazione di una transazione direttamente al server! Quindi non dobbiamo scaricare tutte le transazioni   
+  */
+
+  retrieveTransactions(accountID,param:string ="date",/*periodStart, periodEnd*/limit,offset  ): Observable<Map<string, Array<TransactionInterface>>> {
+    if (!DEBUG) {
+        const params = new HttpParams({
+            fromObject: {
+                //'periodStart': periodStart,
+                //'periodEnd': periodEnd,
+                'offset': offset,
+                'limit': limit,
+                'orderBy':param,
+            }
+        });
+                                                      // poi aggiungo meglio il parametro
+        return this.http.get(API_PATH+`/${accountID}/transactions`, {params:params}).pipe(map(
+            (data:{transactions:any}) => {
+                const transactions = data.transactions;
+                const accountTransactions = new Map<string, Array<TransactionInterface>>();
+                accountTransactions.set(accountID,transactions)
+                return accountTransactions;
+            }
+          ));
+      } else {
+
+          const transactions : TransactionInterface[]= this.createTransactions(accountID,true,offset,limit)
+          const accountTransactions = new Map<string, Array<TransactionInterface>>();
+          accountTransactions.set(accountID,transactions)
+
+          return of(accountTransactions)
+      }
+    }
+  
+    commitTransaction(saveTransaction:TransactionInterface){
+      if (DEBUG) {     
+        saveTransaction.id=this.transactionsIDs++   
+        const arr = this._selectedTransactionsSubject.value;
+        arr.get(saveTransaction.account.id+"").splice(0,0,saveTransaction);
+        this._selectedTransactionsSubject.next(arr);
+        console.log('Transaction created');
+        return of(saveTransaction);
+
+      }else return this.http.post(API_PATH+`/${saveTransaction.account.id}/transactions`, saveTransaction).pipe(map(
+          (data:any) => {
+              const transaction = new Transaction(data.transaction);
+              const arr = this._selectedTransactionsSubject.value;
+              arr.get(transaction.account.id+"").splice(0,0,transaction);
+              this._selectedTransactionsSubject.next(arr);
+              console.log('Transaction created');
+              return transaction;
+          }
+      ));
+    }
+
+  
+
+    getTransactions(accountID?):Map<string, Array<TransactionInterface>>{
+      let map=new Map<string, Array<TransactionInterface>>()
+      if(accountID)
+        map.set(accountID,this._selectedTransactionsSubject.value.get(accountID))
+      else map=this._selectedTransactionsSubject.value
+      return map
+    }
+  
+    getSelectedTransactions(accountID?){
+      let map=new Map<string, Array<TransactionInterface>>()
+      if(accountID)
+        map.set(accountID,this._selectedTransactionsSubject.value.get(accountID))
+      else map=this._selectedTransactionsSubject.value
+      return map
+    }
+  
+
+
+    /**HELPERS per testare senza SERVER */
+  /***************************************************************************** */
+  createTransactions(accountID,init=false,limit,offset): TransactionInterface[] {
+    
+    let transactions: TransactionInterface[] = [];
+    if(init==true){
+      for (let i = 1; i <= 500; i++) {
+        this.transactionsData.push(this.createNewTransaction(this.transactionsIDs++,accountID));
+      }
+      this.transactionsData.sort( (t1,t2)=> {
+        return t1.date<=t2.date ? 1:-1
+      })
+    }
+    transactions=this.transactionsData.slice(offset,Math.min(limit+offset,this.transactionsData.length))
+    
+    return transactions;
+  }
+
+
+
+  createNewTransaction(id: number,accountID): TransactionInterface {
+    let categories=this.categoriesService.getCategories();
+    const category =categories[this.getRandomArrayIndex(categories.length)]
+    let date=new Date()
+    date.setMonth(new Date(Date.now()).getMonth()-Math.random() * (15))
+
+    return {
+      id: id,
+      category: category,
+      date: date.getTime(),
+      amount: Math.round(Math.random() * (100)-Math.random()*150),
+      account: this.accountService.getAccounts().find(account=> account.id==accountID),
+    };
+  }
+
+  private getRandomArrayIndex(length: number): number {
+    return Math.round(Math.random() * (length - 1));
+  }
+
+
+}
+ 
+
+
+
+//   addTransaction(transaction: TransactionInterface){
+//     transaction.id=++this.id
+//     this.transactions.push(transaction)
+//     this.transactionsChanged.emit(true);
+//   }
+
+//   createNewTransaction(id: number): TransactionInterface {
+//     const category =
+//       this.categories[this.getRandomArrayIndex(this.categories.length)]
+
+//     return {
+//       id: id,
+//       category: category,
+//       date: new Date(),
+//       amount: Math.round(Math.random() * (100)-Math.random()*150),
+//       account: this.accounts[this.getRandomArrayIndex(this.accounts.length)]
+//     };
+//   }
+
+//   create100Transactions(): TransactionInterface[] {
+//     const transactions: TransactionInterface[] = [];
+//     for (let i = 1; i <= 100; i++) {
+//       transactions.push(this.createNewTransaction(i));
+//     }
+//     console.log(transactions)
+
+//     this.transactions=transactions
+//     return transactions;
+// }
+
+  
+// }
