@@ -1,0 +1,83 @@
+version: '3.3'
+
+services:
+    taass-db:
+        image: mysql:5.7
+        container_name: taass-db
+        restart: unless-stopped
+        environment:
+            MYSQL_DATABASE: 'taass'
+            MYSQL_USER: 'user'
+            MYSQL_PASSWORD: 'psw'
+            MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
+            MYSQL_ROOT_PASSWORD: ''
+        expose:
+            - '3306'
+        volumes:
+            - taass-database-volume:/var/lib/mysql
+
+    taass-spring-auth-api:
+        build: ./taass-spring-auth-api
+        container_name: taass-spring-auth-api
+        ports:
+            - "${DEBUG_PORT_AUTH:-5005}:5005"
+        environment:
+            - SUSPEND=${SUSPEND_AUTH:-n}
+        depends_on:
+            - taass-db
+
+    taass-spring-transaction-api:
+        build: ./taass-spring-transaction-api
+        container_name: taass-spring-transaction-api
+        ports:
+            - "${DEBUG_PORT_TRANS:-5006}:5005"
+        environment:
+            - SUSPEND=${SUSPEND_TRANS:-n}
+        depends_on:
+            - taass-db
+
+    taass-spring-group-api:
+        build: ./taass-spring-group-api
+        container_name: taass-spring-group-api
+        ports:
+            - "${DEBUG_PORT_GROUP:-5007}:5005"
+        environment:
+            - SUSPEND=${SUSPEND_GROUP:-n}
+        depends_on:
+            - taass-db
+
+    taass-spring-stats-api:
+        build: ./taass-spring-stats-api
+        container_name: taass-spring-stats-api
+        ports:
+            - "${DEBUG_PORT_STATS:-5008}:5005"
+        environment:
+            - SUSPEND=${SUSPEND_STATS:-n}
+        depends_on:
+            - taass-db
+
+    taass-angular-frontend:
+        build: ./taass-angular-frontend
+        container_name: taass-angular-frontend
+        ports:
+            - "49153:49153"
+        environment:
+            - CHOKIDAR_USEPOLLING=${POLLING:-false}
+        volumes: # Usato per il live-reload
+            - "./taass-angular-frontend:/app"
+
+    taass-reverse-proxy:
+        build: ./taass-reverse-proxy
+        container_name: taass-reverse-proxy
+        restart: unless-stopped
+        ports:
+            - "8080:80"
+        depends_on:
+            - taass-angular-frontend
+            - taass-spring-auth-api
+            - taass-spring-transaction-api
+            - taass-spring-group-api
+            - taass-spring-stats-api
+
+volumes:
+    taass-database-volume:
